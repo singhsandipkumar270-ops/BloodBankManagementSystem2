@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Register - Blood Bank</title>
+
+
+    <style>
+
+        /* ================= RESET ================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* ================= BODY ================= */
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #8b0000,
+                            #d32f2f,
+                            #ff6f91
+                    );
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 30px;
+        }
+
+
+        /* ================= REGISTER BOX ================= */
+
+        .register-box {
+
+            width: 100%;
+
+            max-width: 500px;
+
+            background:
+                    rgba(255, 255, 255, 0.96);
+
+            padding: 40px;
+
+            border-radius: 25px;
+
+            box-shadow:
+                    0 15px 40px
+                    rgba(0, 0, 0, 0.25);
+
+            animation:
+                    boxAppear
+                    0.6s
+                    ease-in-out;
+        }
+
+
+        @keyframes boxAppear {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(20px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        /* ================= ICON ================= */
+
+        .icon {
+
+            text-align: center;
+
+            font-size: 60px;
+
+            margin-bottom: 10px;
+
+            animation:
+                    heartbeat
+                    1.5s
+                    infinite;
+        }
+
+
+        @keyframes heartbeat {
+
+            0% {
+
+                transform:
+                        scale(1);
+            }
+
+            25% {
+
+                transform:
+                        scale(1.08);
+            }
+
+            50% {
+
+                transform:
+                        scale(1);
+            }
+
+            75% {
+
+                transform:
+                        scale(1.08);
+            }
+
+            100% {
+
+                transform:
+                        scale(1);
+            }
+        }
+
+
+        /* ================= HEADING ================= */
+
+        h1 {
+
+            text-align: center;
+
+            color: #8b0000;
+
+            font-size: 36px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #777;
+
+            font-size: 15px;
+
+            line-height: 1.5;
+
+            margin-bottom: 25px;
+        }
+
+
+        /* ================= ERROR MESSAGE ================= */
+
+        .error-message {
+
+            background: #ffebee;
+
+            color: #c62828;
+
+            border:
+                    1px solid
+                    #ef9a9a;
+
+            border-left:
+                    6px solid
+                    #c62828;
+
+            padding: 14px 16px;
+
+            border-radius: 10px;
+
+            margin-bottom: 22px;
+
+            text-align: center;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            box-shadow:
+                    0 4px 12px
+                    rgba(198, 40, 40, 0.12);
+
+            animation:
+                    errorAppear
+                    0.4s
+                    ease-in-out;
+        }
+
+
+        @keyframes errorAppear {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(-10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        /* ================= FORM GROUP ================= */
+
+        .form-group {
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= LABEL ================= */
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-weight: bold;
+
+            color: #333;
+
+            font-size: 15px;
+        }
+
+
+        /* ================= INPUT ================= */
+
+        input {
+
+            width: 100%;
+
+            padding: 14px 16px;
+
+            border:
+                    1px solid
+                    #ddd;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.3s;
+        }
+
+
+        input:focus {
+
+            border-color: #d32f2f;
+
+            box-shadow:
+                    0 0 0 3px
+                    rgba(211, 47, 47, 0.12);
+        }
+
+
+        input::placeholder {
+
+            color: #aaa;
+        }
+
+
+        /* ================= PASSWORD BOX ================= */
+
+        .password-box {
+
+            position: relative;
+
+            width: 100%;
+        }
+
+
+        .password-box input {
+
+            padding-right: 50px;
+
+            margin-bottom: 0;
+        }
+
+
+        /* ================= SHOW PASSWORD ================= */
+
+        .show-password {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform:
+                    translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            width: auto;
+
+            padding: 5px;
+
+            margin: 0;
+
+            color: #777;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+            box-shadow: none;
+        }
+
+
+        .show-password:hover {
+
+            transform:
+                    translateY(-50%)
+                    scale(1.1);
+
+            box-shadow: none;
+        }
+
+
+        /* ================= PASSWORD HINT ================= */
+
+        .password-hint {
+
+            margin-top: 7px;
+
+            color: #888;
+
+            font-size: 12px;
+        }
+
+
+        /* ================= REGISTER BUTTON ================= */
+
+        .register-btn {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 30px;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            #b71c1c,
+                            #e53935
+                    );
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 5px;
+
+            transition: 0.3s;
+        }
+
+
+        .register-btn:hover {
+
+            transform:
+                    translateY(-3px);
+
+            box-shadow:
+                    0 8px 20px
+                    rgba(183, 28, 28, 0.30);
+        }
+
+
+        .register-btn:active {
+
+            transform:
+                    translateY(0);
+        }
+
+
+        .register-btn:disabled {
+
+            opacity: 0.7;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+
+        /* ================= LOGIN LINK ================= */
+
+        .login-link {
+
+            text-align: center;
+
+            margin-top: 23px;
+
+            color: #666;
+
+            font-size: 15px;
+        }
+
+
+        .login-link a {
+
+            color: #b71c1c;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+
+        .login-link a:hover {
+
+            color: #7f0000;
+
+            text-decoration: underline;
+        }
+
+
+        /* ================= HOME LINK ================= */
+
+        .home-link {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #888;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.3s;
+        }
+
+
+        .home-link:hover {
+
+            color: #b71c1c;
+
+            transform:
+                    translateX(-3px);
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding:
+                        20px 15px;
+            }
+
+
+            .register-box {
+
+                padding:
+                        30px 25px;
+
+                border-radius: 20px;
+            }
+
+
+            h1 {
+
+                font-size: 30px;
+            }
+
+
+            .icon {
+
+                font-size: 52px;
+            }
+
+
+            .subtitle {
+
+                font-size: 14px;
+            }
+
+
+            input {
+
+                font-size: 15px;
+
+                padding:
+                        13px 14px;
+            }
+
+
+            .password-box input {
+
+                padding-right: 48px;
+            }
+
+
+            .register-btn {
+
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- ================= REGISTER BOX ====================== -->
+<!-- ===================================================== -->
+
+<div class="register-box">
+
+
+    <!-- ================= ICON ================= -->
+
+    <div class="icon">
+
+        🩸
+
+    </div>
+
+
+    <!-- ================= HEADING ================= -->
+
+    <h1>
+
+        Create Account
+
+    </h1>
+
+
+    <p class="subtitle">
+
+        Register to use the Blood Bank Management System
+
+    </p>
+
+
+    <!-- ================================================= -->
+    <!-- ================= ERROR MESSAGE ================== -->
+    <!-- ================================================= -->
+
+    <div
+            th:if="${error}"
+            class="error-message">
+
+        ❌
+
+        <span th:text="${error}">
+
+            Email already registered!
+            Please use another email.
+
+        </span>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ================= REGISTER FORM ================= -->
+    <!-- ================================================= -->
+
+    <form
+            action="/register"
+            method="post">
+
+
+        <!-- ================= FULL NAME ================= -->
+
+        <div class="form-group">
+
+            <label for="name">
+
+                👤 Full Name
+
+            </label>
+
+
+            <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                    required>
+
+        </div>
+
+
+        <!-- ================= EMAIL ================= -->
+
+        <div class="form-group">
+
+            <label for="email">
+
+                📧 Email
+
+            </label>
+
+
+            <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required>
+
+        </div>
+
+
+        <!-- ================= PASSWORD ================= -->
+
+        <div class="form-group">
+
+            <label for="password">
+
+                🔑 Password
+
+            </label>
+
+
+            <div class="password-box">
+
+
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="4"
+                        required>
+
+
+                <!-- Show / Hide Button -->
+
+                <button
+                        type="button"
+                        class="show-password"
+                        id="showPassword"
+                        onclick="togglePassword()"
+                        aria-label="Show password">
+
+                    👁️
+
+                </button>
+
+
+            </div>
+
+
+            <div class="password-hint">
+
+                🔒 Password must contain at least 4 characters.
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- ================= REGISTER BUTTON =============== -->
+        <!-- ================================================= -->
+
+        <button
+                type="submit"
+                class="register-btn"
+                id="registerButton">
+
+            📝 Create Account
+
+        </button>
+
+
+    </form>
+
+
+    <!-- ================================================= -->
+    <!-- ================= LOGIN LINK ===================== -->
+    <!-- ================================================= -->
+
+    <div class="login-link">
+
+        Already have an account?
+
+        <a href="/login">
+
+            Login
+
+        </a>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ================= HOME LINK ====================== -->
+    <!-- ================================================= -->
+
+    <a
+            href="/"
+            class="home-link">
+
+        ← Back to Home
+
+    </a>
+
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ================= JAVASCRIPT ======================== -->
+<!-- ===================================================== -->
+
+<script>
+
+
+    /* ================= SHOW / HIDE PASSWORD ================= */
+
+    function togglePassword() {
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const showPasswordButton =
+            document.getElementById("showPassword");
+
+
+        if (passwordInput.type === "password") {
+
+            passwordInput.type = "text";
+
+            showPasswordButton.textContent = "🙈";
+
+            showPasswordButton.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
+
+        } else {
+
+            passwordInput.type = "password";
+
+            showPasswordButton.textContent = "👁️";
+
+            showPasswordButton.setAttribute(
+                "aria-label",
+                "Show password"
+            );
+        }
+
+    }
+
+
+    /* ================= REGISTER BUTTON ================= */
+
+    document
+        .querySelector("form")
+        .addEventListener("submit", function () {
+
+            const button =
+                document.getElementById("registerButton");
+
+            button.textContent =
+                "⏳ Creating Account...";
+
+            button.disabled = true;
+
+        });
+
+</script>
+
+
+</body>
+
+</html>

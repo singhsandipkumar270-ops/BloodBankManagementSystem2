@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Find Blood - Blood Bank</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #7f0000, #c62828, #ef5350);
+            padding: 35px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            margin: auto;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .blood-icon {
+            font-size: 55px;
+            margin-bottom: 8px;
+        }
+
+        .header h1 {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #ffe5e5;
+        }
+
+        /* ================= SEARCH CARD ================= */
+
+        .search-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+            margin-bottom: 25px;
+        }
+
+        .search-card label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        select {
+            flex: 1;
+            padding: 14px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+        }
+
+        select:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.10);
+        }
+
+        .search-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            background: #b71c1c;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #8b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.20);
+        }
+
+        /* ================= STOCK RESULT ================= */
+
+        .stock-result {
+            background: linear-gradient(135deg, #fff5f5, #ffffff);
+            border: 2px solid #ffcdd2;
+            padding: 25px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stock-result-icon {
+            font-size: 45px;
+            margin-bottom: 8px;
+        }
+
+        .stock-result h2 {
+            color: #8b0000;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .stock-result p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .unit-number {
+            color: #b71c1c;
+            font-size: 48px;
+            font-weight: bold;
+            line-height: 1.1;
+        }
+
+        .unit-label {
+            color: #777;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+        .available-message {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .not-available-message {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: #ffebee;
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        /* ================= RESULTS ================= */
+
+        .results-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .results-title {
+            text-align: center;
+            color: #8b0000;
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .search-summary {
+            text-align: center;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .search-summary strong {
+            color: #b71c1c;
+        }
+
+        /* ================= DONOR ================= */
+
+        .donor {
+            border: 1px solid #eee;
+            border-left: 5px solid #c62828;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            background: #fffafa;
+            transition: 0.3s;
+        }
+
+        .donor:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.10);
+        }
+
+        .donor-name {
+            font-size: 21px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .blood-group {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #ffe0e0;
+            color: #b71c1c;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .donor-info {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+            font-size: 16px;
+            background: #fafafa;
+            border-radius: 12px;
+        }
+
+        .no-result-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        /* ================= BOTTOM LINKS ================= */
+
+        .links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .links a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 22px;
+            border-radius: 25px;
+            margin: 5px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .home {
+            background: white;
+            color: #8b0000;
+        }
+
+        .all-donors {
+            background: #ffe0e0;
+            color: #b71c1c;
+        }
+
+        .blood-stock {
+            background: #8b0000;
+            color: white;
+        }
+
+        .links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .search-card,
+            .results-card {
+                padding: 22px 18px;
+            }
+
+            .header h1 {
+                font-size: 30px;
+            }
+
+            .search-row {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                width: 100%;
+            }
+
+            .stock-result h2 {
+                font-size: 23px;
+            }
+
+            .unit-number {
+                font-size: 40px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="header">
+
+        <div class="blood-icon">
+            🩸
+        </div>
+
+        <h1>
+            Find Blood
+        </h1>
+
+        <p>
+            Search for available blood stock and donors quickly ❤️
+        </p>
+
+    </div>
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <div class="search-card">
+
+        <form action="/find-blood" method="get">
+
+            <label for="bloodGroup">
+                Select Blood Group
+            </label>
+
+            <div class="search-row">
+
+                <select
+                        id="bloodGroup"
+                        name="bloodGroup"
+                        required>
+
+                    <option value="">
+                        Select Blood Group
+                    </option>
+
+                    <option value="A+"
+                            th:selected="${selectedBloodGroup == 'A+'}">
+                        A+
+                    </option>
+
+                    <option value="A-"
+                            th:selected="${selectedBloodGroup == 'A-'}">
+                        A-
+                    </option>
+
+                    <option value="B+"
+                            th:selected="${selectedBloodGroup == 'B+'}">
+                        B+
+                    </option>
+
+                    <option value="B-"
+                            th:selected="${selectedBloodGroup == 'B-'}">
+                        B-
+                    </option>
+
+                    <option value="O+"
+                            th:selected="${selectedBloodGroup == 'O+'}">
+                        O+
+                    </option>
+
+                    <option value="O-"
+                            th:selected="${selectedBloodGroup == 'O-'}">
+                        O-
+                    </option>
+
+                    <option value="AB+"
+                            th:selected="${selectedBloodGroup == 'AB+'}">
+                        AB+
+                    </option>
+
+                    <option value="AB-"
+                            th:selected="${selectedBloodGroup == 'AB-'}">
+                        AB-
+                    </option>
+
+                </select>
+
+
+                <button
+                        type="submit"
+                        class="search-btn">
+
+                    🔎 Find Blood
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ================= BLOOD STOCK RESULT ============= -->
+    <!-- ================================================= -->
+
+    <div
+            class="stock-result"
+            th:if="${selectedBloodGroup != null}">
+
+        <div class="stock-result-icon">
+            🩸
+        </div>
+
+        <h2>
+
+            Blood Group:
+            <span th:text="${selectedBloodGroup}">
+                O+
+            </span>
+
+        </h2>
+
+        <p>
+            Current blood units available in the blood bank
+        </p>
+
+
+        <!-- Stock Available -->
+
+        <div th:if="${bloodStock != null}">
+
+            <div
+                    class="unit-number"
+                    th:text="${totalUnits}">
+
+                0
+
+            </div>
+
+            <div class="unit-label">
+                Available Units
+            </div>
+
+            <div
+                    class="available-message"
+                    th:if="${totalUnits > 0}">
+
+                ✅ Blood Stock Available
+
+            </div>
+
+            <div
+                    class="not-available-message"
+                    th:if="${totalUnits == 0}">
+
+                ⚠️ Stock is currently 0 units
+
+            </div>
+
+        </div>
+
+
+        <!-- No Stock Record -->
+
+        <div th:if="${bloodStock == null}">
+
+            <div class="unit-number">
+                0
+            </div>
+
+            <div class="unit-label">
+                Available Units
+            </div>
+
+            <div class="not-available-message">
+
+                ❌ Blood Stock Not Available
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ================= DONOR RESULTS ================== -->
+    <!-- ================================================= -->
+
+    <div
+            class="results-card"
+            th:if="${donors != null}">
+
+        <h2 class="results-title">
+            👥 Matching Donors
+        </h2>
+
+
+        <div class="search-summary">
+
+            Search results for blood group:
+
+            <strong th:text="${selectedBloodGroup}">
+                O+
+            </strong>
+
+        </div>
+
+
+        <!-- ================= DONOR LIST ================= -->
+
+        <div
+                th:each="donor : ${donors}"
+                class="donor">
+
+            <div
+                    class="donor-name"
+                    th:text="${donor.name}">
+
+                Donor Name
+
+            </div>
+
+
+            <div
+                    class="blood-group"
+                    th:text="${donor.bloodGroup}">
+
+                O+
+
+            </div>
+
+
+            <div class="donor-info">
+
+                📞
+                <strong>
+                    Phone:
+                </strong>
+
+                <span th:text="${donor.phone}">
+                </span>
+
+                <br>
+
+
+                📍
+                <strong>
+                    Address:
+                </strong>
+
+                <span th:text="${donor.address}">
+                </span>
+
+                <br>
+
+
+                👤
+                <strong>
+                    Gender:
+                </strong>
+
+                <span th:text="${donor.gender}">
+                </span>
+
+                <br>
+
+
+                🎂
+                <strong>
+                    Age:
+                </strong>
+
+                <span th:text="${donor.age}">
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= NO DONOR ================= -->
+
+        <div
+                class="no-result"
+                th:if="${#lists.isEmpty(donors)}">
+
+            <div class="no-result-icon">
+                ❌
+            </div>
+
+            <strong>
+                No donors found
+            </strong>
+
+            <br>
+
+            No registered donor was found for blood group
+
+            <strong th:text="${selectedBloodGroup}">
+                O+
+            </strong>.
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <div class="links">
+
+        <a
+                href="/"
+                class="home">
+
+            🏠 Back to Home
+
+        </a>
+
+
+        <a
+                href="/donors"
+                class="all-donors">
+
+            👥 View All Donors
+
+        </a>
+
+
+        <a
+                href="/blood-stock"
+                class="blood-stock">
+
+            📦 Manage Blood Stock
+
+        </a>
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>

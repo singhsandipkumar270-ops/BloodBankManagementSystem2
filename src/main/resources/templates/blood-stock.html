@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Blood Stock Management</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(
+                    135deg,
+                    #7f0000,
+                    #c62828,
+                    #ef5350
+            );
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ================= HEADER ================= */
+
+        .heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #8b0000;
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 16px;
+        }
+
+        /* ================= MESSAGES ================= */
+
+        .message {
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 5px solid #2e7d32;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 5px solid #c62828;
+        }
+
+        .admin-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .user-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        /* ================= ADD STOCK ================= */
+
+        .add-box {
+            background: #fff8f8;
+            border: 1px solid #eee;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 35px;
+        }
+
+        .add-title {
+            text-align: center;
+            color: #8b0000;
+            font-size: 25px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 9px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.12);
+        }
+
+        .add-btn {
+            padding: 13px 25px;
+            border: none;
+            border-radius: 25px;
+            background: #a90000;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .add-btn:hover {
+            background: #7f0000;
+            transform: translateY(-2px);
+        }
+
+        /* ================= STOCK TITLE ================= */
+
+        .stock-title {
+            text-align: center;
+            color: #8b0000;
+            font-size: 27px;
+            margin-bottom: 20px;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th {
+            background: #8b0000;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #fff5f5;
+        }
+
+        tr:hover {
+            background: #ffe5e5;
+        }
+
+        .blood-group {
+            display: inline-block;
+            background: #ffe0e0;
+            color: #b71c1c;
+            padding: 7px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .units {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b0000;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .edit-btn,
+        .delete-btn {
+            display: inline-block;
+            padding: 8px 13px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .edit-btn {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .delete-btn {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .edit-btn:hover {
+            background: #ffe08a;
+        }
+
+        .delete-btn:hover {
+            background: #f1aeb5;
+        }
+
+        .view-only {
+            color: #888;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* ================= NO STOCK ================= */
+
+        .no-stock {
+            padding: 30px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* ================= BOTTOM BUTTONS ================= */
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .bottom-btn {
+            display: inline-block;
+            padding: 13px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .home-btn {
+            background: #8b0000;
+            color: white;
+        }
+
+        .donor-btn {
+            background: #ffe0e0;
+            color: #8b0000;
+        }
+
+        .dashboard-btn {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-top: 25px;
+            line-height: 1.6;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 20px 10px;
+            }
+
+            .container {
+                padding: 22px 15px;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .add-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="heading">
+
+        <div class="icon">
+            🩸
+        </div>
+
+        <h1>
+            Blood Stock Management
+        </h1>
+
+        <p class="subtitle">
+            Check and manage available blood units
+        </p>
+
+    </div>
+
+
+    <!-- ================= ADD SUCCESS ================= -->
+
+    <div
+            th:if="${param.success != null and param.success[0] == 'added'}"
+            class="message success">
+
+        ✅ Blood stock added successfully!
+
+    </div>
+
+
+    <!-- ================= UPDATE SUCCESS ================= -->
+
+    <div
+            th:if="${param.success != null and param.success[0] == 'updated'}"
+            class="message success">
+
+        ✅ Blood stock updated successfully!
+
+    </div>
+
+
+    <!-- ================= DELETE SUCCESS ================= -->
+
+    <div
+            th:if="${param.success != null and param.success[0] == 'deleted'}"
+            class="message success">
+
+        🗑️ Blood stock deleted successfully!
+
+    </div>
+
+
+    <!-- ================= ERROR ================= -->
+
+    <div
+            th:if="${param.error != null}"
+            class="message error">
+
+        ❌ Please enter a valid number of units.
+
+    </div>
+
+
+    <!-- ================= ADMIN MESSAGE ================= -->
+
+    <div
+            th:if="${session.role == 'ADMIN'}"
+            class="admin-message">
+
+        👑 ADMIN MODE —
+        You can Add, Edit and Delete blood stock.
+
+    </div>
+
+
+    <!-- ================= USER MESSAGE ================= -->
+
+    <div
+            th:if="${session.role == 'USER'}"
+            class="user-message">
+
+        👤 USER MODE —
+        You can view available blood stock.
+
+    </div>
+
+
+    <!-- ================= ADD STOCK ================= -->
+
+    <div
+            th:if="${session.role == 'ADMIN'}"
+            class="add-box">
+
+        <div class="add-title">
+
+            ➕ Add Blood Stock
+
+        </div>
+
+
+        <form
+                action="/blood-stock/add"
+                method="post">
+
+            <div class="form-row">
+
+
+                <!-- BLOOD GROUP -->
+
+                <div class="form-group">
+
+                    <label for="bloodGroup">
+                        Blood Group
+                    </label>
+
+                    <select
+                            id="bloodGroup"
+                            name="bloodGroup"
+                            required>
+
+                        <option value="">
+                            Select Blood Group
+                        </option>
+
+                        <option value="A+">
+                            A+
+                        </option>
+
+                        <option value="A-">
+                            A-
+                        </option>
+
+                        <option value="B+">
+                            B+
+                        </option>
+
+                        <option value="B-">
+                            B-
+                        </option>
+
+                        <option value="O+">
+                            O+
+                        </option>
+
+                        <option value="O-">
+                            O-
+                        </option>
+
+                        <option value="AB+">
+                            AB+
+                        </option>
+
+                        <option value="AB-">
+                            AB-
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="form-group">
+
+                    <label for="quantity">
+                        Units
+                    </label>
+
+                    <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            min="1"
+                            placeholder="Enter units"
+                            required>
+
+                </div>
+
+
+                <!-- ADD BUTTON -->
+
+                <button
+                        type="submit"
+                        class="add-btn">
+
+                    ➕ Add Stock
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ================= CURRENT STOCK ================= -->
+
+    <h2 class="stock-title">
+
+        🩸 Current Blood Stock
+
+    </h2>
+
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Blood Group
+                </th>
+
+                <th>
+                    Available Units
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            <!-- ================= STOCK DATA ================= -->
+
+            <tr
+                    th:each="stock : ${bloodStocks}">
+
+
+                <!-- BLOOD GROUP -->
+
+                <td>
+
+                    <span
+                            class="blood-group"
+                            th:text="${stock.bloodGroup}">
+
+                        A+
+
+                    </span>
+
+                </td>
+
+
+                <!-- QUANTITY -->
+
+                <td>
+
+                    <span
+                            class="units"
+                            th:text="${stock.quantity + ' Units'}">
+
+                        10 Units
+
+                    </span>
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+
+                    <!-- ADMIN ACTIONS -->
+
+                    <span
+                            th:if="${session.role == 'ADMIN'}">
+
+                        <a
+                                class="edit-btn"
+                                th:href="@{/blood-stock/edit/{id}(id=${stock.id})}">
+
+                            ✏️ Edit
+
+                        </a>
+
+
+                        <a
+                                class="delete-btn"
+                                th:href="@{/blood-stock/delete/{id}(id=${stock.id})}"
+                                onclick="return confirm('Are you sure you want to delete this blood stock?');">
+
+                            🗑️ Delete
+
+                        </a>
+
+                    </span>
+
+
+                    <!-- USER VIEW ONLY -->
+
+                    <span
+                            th:if="${session.role == 'USER'}"
+                            class="view-only">
+
+                        👁️ View Only
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+
+            <!-- ================= NO STOCK ================= -->
+
+            <tr
+                    th:if="${#lists.isEmpty(bloodStocks)}">
+
+                <td
+                        colspan="3"
+                        class="no-stock">
+
+                    📦 No blood stock available yet.
+
+                </td>
+
+            </tr>
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ================= BOTTOM BUTTONS ================= -->
+
+    <div class="bottom-buttons">
+
+
+        <a
+                href="/"
+                class="bottom-btn home-btn">
+
+            🏠 Back to Home
+
+        </a>
+
+
+        <a
+                href="/dashboard"
+                class="bottom-btn dashboard-btn">
+
+            📊 Dashboard
+
+        </a>
+
+
+        <a
+                href="/donors"
+                class="bottom-btn donor-btn">
+
+            👥 View Donors
+
+        </a>
+
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        🩸 Blood Bank Management System
+
+        <br>
+
+        Donate Blood • Save Lives ❤️
+
+    </footer>
+
+
+</div>
+
+</body>
+
+</html>

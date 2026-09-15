@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>All Registered Donors - Blood Bank</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #7f0000,
+                            #c62828,
+                            #ef5350
+                    );
+
+            padding: 40px 20px;
+
+            color: #333;
+        }
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                    0 15px 40px
+                    rgba(0, 0, 0, 0.25);
+        }
+
+        /* ================= HEADING ================= */
+
+        .heading {
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+        .heading .icon {
+
+            font-size: 50px;
+
+            margin-bottom: 10px;
+        }
+
+        h1 {
+
+            color: #8b0000;
+
+            font-size: 38px;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+
+            color: #777;
+
+            font-size: 16px;
+        }
+
+        /* ================= MESSAGES ================= */
+
+        .message {
+
+            padding: 14px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+            font-weight: bold;
+        }
+
+        .success {
+
+            background: #e8f5e9;
+
+            color: #2e7d32;
+
+            border: 1px solid #c8e6c9;
+        }
+
+        .admin-message {
+
+            text-align: center;
+
+            background: #fff3cd;
+
+            color: #856404;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-weight: bold;
+        }
+
+        .user-message {
+
+            text-align: center;
+
+            background: #e8f5e9;
+
+            color: #2e7d32;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-weight: bold;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-container {
+
+            overflow-x: auto;
+
+            margin-top: 25px;
+        }
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 900px;
+        }
+
+        th {
+
+            background: #8b0000;
+
+            color: white;
+
+            padding: 15px 12px;
+
+            text-align: left;
+
+            font-size: 15px;
+        }
+
+        td {
+
+            padding: 14px 12px;
+
+            border-bottom:
+                    1px solid #eee;
+
+            font-size: 15px;
+
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+
+            background: #fff5f5;
+        }
+
+        tr:hover {
+
+            background: #ffe5e5;
+
+            transition: 0.2s;
+        }
+
+        /* ================= BLOOD GROUP ================= */
+
+        .blood-group {
+
+            display: inline-block;
+
+            background: #ffe0e0;
+
+            color: #b71c1c;
+
+            padding: 6px 12px;
+
+            border-radius: 20px;
+
+            font-weight: bold;
+
+            min-width: 45px;
+
+            text-align: center;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+
+            white-space: nowrap;
+        }
+
+        .edit-btn,
+        .delete-btn {
+
+            display: inline-block;
+
+            padding: 8px 14px;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            margin: 2px;
+
+            transition: 0.2s;
+        }
+
+        .edit-btn {
+
+            background: #fff3cd;
+
+            color: #856404;
+        }
+
+        .delete-btn {
+
+            background: #f8d7da;
+
+            color: #721c24;
+        }
+
+        .edit-btn:hover {
+
+            background: #ffe08a;
+
+            transform: translateY(-2px);
+        }
+
+        .delete-btn:hover {
+
+            background: #f1aeb5;
+
+            transform: translateY(-2px);
+        }
+
+        /* ================= VIEW ONLY ================= */
+
+        .no-action {
+
+            display: inline-block;
+
+            color: #888;
+
+            font-size: 13px;
+
+            font-style: italic;
+
+            background: #f5f5f5;
+
+            padding: 7px 12px;
+
+            border-radius: 15px;
+        }
+
+        /* ================= NO DONORS ================= */
+
+        .no-donors {
+
+            text-align: center;
+
+            padding: 40px 20px;
+
+            color: #777;
+        }
+
+        .no-donors-icon {
+
+            font-size: 45px;
+
+            margin-bottom: 10px;
+        }
+
+        .no-donors strong {
+
+            display: block;
+
+            color: #555;
+
+            font-size: 18px;
+
+            margin-bottom: 5px;
+        }
+
+        /* ================= BOTTOM BUTTONS ================= */
+
+        .bottom-buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            margin-top: 30px;
+        }
+
+        .bottom-btn {
+
+            display: inline-block;
+
+            padding: 13px 25px;
+
+            border-radius: 25px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+        .home-btn {
+
+            background: #8b0000;
+
+            color: white;
+        }
+
+        .donor-btn {
+
+            background: #ffe0e0;
+
+            color: #8b0000;
+        }
+
+        .find-btn {
+
+            background: #fff3cd;
+
+            color: #856404;
+        }
+
+        .stock-btn {
+
+            background: #e8f5e9;
+
+            color: #2e7d32;
+        }
+
+        .bottom-btn:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                    0 7px 15px
+                    rgba(0, 0, 0, 0.18);
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #888;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px 10px;
+            }
+
+            .container {
+
+                padding: 20px 15px;
+
+                border-radius: 15px;
+            }
+
+            h1 {
+
+                font-size: 28px;
+            }
+
+            .heading .icon {
+
+                font-size: 40px;
+            }
+
+            .bottom-buttons {
+
+                flex-direction: column;
+            }
+
+            .bottom-btn {
+
+                width: 100%;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ================= HEADING ================= -->
+
+    <div class="heading">
+
+        <div class="icon">
+            👥
+        </div>
+
+        <h1>
+            All Registered Donors
+        </h1>
+
+        <p class="subtitle">
+            View and manage all registered blood donors
+        </p>
+
+    </div>
+
+
+    <!-- ================= UPDATE SUCCESS ================= -->
+
+    <div
+            class="message success"
+            th:if="${param.success != null and param.success[0] == 'updated'}">
+
+        ✅ Donor information updated successfully!
+
+    </div>
+
+
+    <!-- ================= DELETE SUCCESS ================= -->
+
+    <div
+            class="message success"
+            th:if="${param.success != null and param.success[0] == 'deleted'}">
+
+        🗑️ Donor deleted successfully!
+
+    </div>
+
+
+    <!-- ================= ADMIN MESSAGE ================= -->
+
+    <div
+            class="admin-message"
+            th:if="${session.role == 'ADMIN'}">
+
+        👑 You are logged in as ADMIN.
+        You can Edit and Delete donor records.
+
+    </div>
+
+
+    <!-- ================= USER MESSAGE ================= -->
+
+    <div
+            class="user-message"
+            th:if="${session.role == 'USER'}">
+
+        👤 You are logged in as USER.
+        You can view donor records.
+
+    </div>
+
+
+    <!-- ================= DONOR TABLE ================= -->
+
+    <div
+            class="table-container"
+            th:if="${donors != null and !#lists.isEmpty(donors)}">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Name
+                </th>
+
+                <th>
+                    Age
+                </th>
+
+                <th>
+                    Gender
+                </th>
+
+                <th>
+                    Blood Group
+                </th>
+
+                <th>
+                    Phone
+                </th>
+
+                <th>
+                    Address
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <tr
+                    th:each="donor : ${donors}">
+
+
+                <!-- NAME -->
+
+                <td
+                        th:text="${donor.name}">
+
+                    Rahul
+
+                </td>
+
+
+                <!-- AGE -->
+
+                <td
+                        th:text="${donor.age}">
+
+                    25
+
+                </td>
+
+
+                <!-- GENDER -->
+
+                <td
+                        th:text="${donor.gender}">
+
+                    Male
+
+                </td>
+
+
+                <!-- BLOOD GROUP -->
+
+                <td>
+
+                    <span
+                            class="blood-group"
+                            th:text="${donor.bloodGroup}">
+
+                        O+
+
+                    </span>
+
+                </td>
+
+
+                <!-- PHONE -->
+
+                <td
+                        th:text="${donor.phone}">
+
+                    9876543210
+
+                </td>
+
+
+                <!-- ADDRESS -->
+
+                <td
+                        th:text="${donor.address}">
+
+                    Delhi
+
+                </td>
+
+
+                <!-- ACTIONS -->
+
+                <td class="actions">
+
+
+                    <!-- ADMIN EDIT -->
+
+                    <a
+                            th:if="${session.role == 'ADMIN'}"
+                            class="edit-btn"
+                            th:href="@{/donor/edit/{id}(id=${donor.id})}">
+
+                        ✏️ Edit
+
+                    </a>
+
+
+                    <!-- ADMIN DELETE -->
+
+                    <a
+                            th:if="${session.role == 'ADMIN'}"
+                            class="delete-btn"
+                            th:href="@{/donor/delete/{id}(id=${donor.id})}"
+                            onclick="return confirm('Are you sure you want to delete this donor?');">
+
+                        🗑️ Delete
+
+                    </a>
+
+
+                    <!-- USER VIEW ONLY -->
+
+                    <span
+                            th:if="${session.role == 'USER'}"
+                            class="no-action">
+
+                        👁️ View Only
+
+                    </span>
+
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- ================= NO DONORS ================= -->
+
+    <div
+            class="no-donors"
+            th:if="${donors == null or #lists.isEmpty(donors)}">
+
+        <div class="no-donors-icon">
+            ❌
+        </div>
+
+        <strong>
+            No donors registered yet.
+        </strong>
+
+        <span>
+            Register a donor to see the record here.
+        </span>
+
+    </div>
+
+
+    <!-- ================= BOTTOM BUTTONS ================= -->
+
+    <div class="bottom-buttons">
+
+
+        <a
+                href="/"
+                class="bottom-btn home-btn">
+
+            🏠 Back to Home
+
+        </a>
+
+
+        <a
+                href="/donor"
+                class="bottom-btn donor-btn">
+
+            🩸 Register New Donor
+
+        </a>
+
+
+        <a
+                href="/find-blood"
+                class="bottom-btn find-btn">
+
+            🔎 Find Blood
+
+        </a>
+
+
+        <a
+                href="/blood-stock"
+                class="bottom-btn stock-btn">
+
+            📦 Blood Stock
+
+        </a>
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        🩸 Blood Bank Management System
+
+        <br>
+
+        Donate Blood • Save Lives ❤️
+
+    </footer>
+
+
+</div>
+
+
+</body>
+
+</html>

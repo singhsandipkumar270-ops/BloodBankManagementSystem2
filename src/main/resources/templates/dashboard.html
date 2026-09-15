@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Blood Bank Management System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #7f0000,
+                            #c62828,
+                            #ef5350
+                    );
+
+            color: #333;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        nav {
+            min-height: 70px;
+
+            background:
+                    rgba(0, 0, 0, 0.30);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 15px 60px;
+
+            box-shadow:
+                    0 3px 15px
+                    rgba(0, 0, 0, 0.20);
+        }
+
+
+        .logo {
+            color: white;
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+        }
+
+
+        .logo span {
+            color: #ffe5e5;
+        }
+
+
+        .nav-links {
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+        }
+
+
+        nav a {
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+
+        nav a:hover {
+            color: #ffdada;
+
+            transform: translateY(-2px);
+        }
+
+
+        .welcome-user {
+            background: white;
+
+            color: #b71c1c;
+
+            padding: 8px 14px;
+
+            border-radius: 20px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        .logout-btn {
+            padding: 8px 15px;
+
+            background: #8b0000;
+
+            color: white;
+
+            border: 1px solid white;
+
+            border-radius: 20px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .main {
+            width: 100%;
+
+            max-width: 1150px;
+
+            margin: auto;
+
+            padding: 45px 20px;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        .dashboard-header {
+            text-align: center;
+
+            color: white;
+
+            margin-bottom: 35px;
+        }
+
+
+        .dashboard-icon {
+            font-size: 60px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .dashboard-header h1 {
+            font-size: 42px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .dashboard-header p {
+            font-size: 17px;
+
+            color: #ffecec;
+        }
+
+
+        .role-badge {
+            display: inline-block;
+
+            margin-top: 15px;
+
+            padding: 8px 18px;
+
+            border-radius: 25px;
+
+            background: white;
+
+            color: #8b0000;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        /* ================= SUMMARY CARDS ================= */
+
+        .summary-grid {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(3, 1fr);
+
+            gap: 22px;
+
+            margin-bottom: 35px;
+        }
+
+
+        .summary-card {
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 30px 20px;
+
+            text-align: center;
+
+            box-shadow:
+                    0 12px 30px
+                    rgba(0, 0, 0, 0.22);
+
+            transition: 0.3s;
+        }
+
+
+        .summary-card:hover {
+            transform: translateY(-7px);
+
+            box-shadow:
+                    0 18px 35px
+                    rgba(0, 0, 0, 0.28);
+        }
+
+
+        .summary-icon {
+            font-size: 42px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .summary-card h3 {
+            color: #8b0000;
+
+            font-size: 18px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .summary-number {
+            color: #b71c1c;
+
+            font-size: 42px;
+
+            font-weight: bold;
+        }
+
+
+        .summary-label {
+            color: #777;
+
+            font-size: 14px;
+
+            margin-top: 5px;
+        }
+
+
+        /* ================= STOCK SECTION ================= */
+
+        .stock-section {
+            background:
+                    rgba(255, 255, 255, 0.13);
+
+            border:
+                    1px solid
+                    rgba(255, 255, 255, 0.20);
+
+            border-radius: 25px;
+
+            padding: 30px 25px;
+
+            margin-bottom: 35px;
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        .stock-heading {
+            text-align: center;
+
+            color: white;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stock-heading h2 {
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .stock-heading p {
+            color: #ffecec;
+
+            font-size: 15px;
+        }
+
+
+        .stock-grid {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .stock-card {
+            background: white;
+
+            border-radius: 17px;
+
+            padding: 22px 15px;
+
+            text-align: center;
+
+            box-shadow:
+                    0 8px 22px
+                    rgba(0, 0, 0, 0.18);
+
+            transition: 0.3s;
+        }
+
+
+        .stock-card:hover {
+            transform: translateY(-5px);
+        }
+
+
+        .stock-icon {
+            font-size: 35px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .stock-card h3 {
+            color: #8b0000;
+
+            font-size: 25px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .stock-card p {
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .stock-number {
+            color: #b71c1c;
+
+            font-size: 34px;
+
+            font-weight: bold;
+        }
+
+
+        .stock-unit {
+            color: #777;
+
+            font-size: 12px;
+        }
+
+
+        .no-stock {
+            grid-column: 1 / -1;
+
+            background: white;
+
+            border-radius: 17px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            color: #777;
+        }
+
+
+        .no-stock-icon {
+            font-size: 42px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .no-stock h3 {
+            color: #8b0000;
+
+            margin-bottom: 7px;
+        }
+
+
+        /* ================= BLOOD GROUP SUMMARY ================= */
+
+        .blood-summary-section {
+            background:
+                    rgba(255, 255, 255, 0.13);
+
+            border:
+                    1px solid
+                    rgba(255, 255, 255, 0.20);
+
+            border-radius: 25px;
+
+            padding: 30px 25px;
+
+            margin-bottom: 35px;
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        .blood-summary-heading {
+            text-align: center;
+
+            color: white;
+
+            margin-bottom: 25px;
+        }
+
+
+        .blood-summary-heading h2 {
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .blood-summary-heading p {
+            color: #ffecec;
+
+            font-size: 15px;
+        }
+
+
+        .blood-summary-grid {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .blood-summary-card {
+            background: white;
+
+            border-radius: 17px;
+
+            padding: 22px 15px;
+
+            text-align: center;
+
+            box-shadow:
+                    0 8px 22px
+                    rgba(0, 0, 0, 0.18);
+
+            transition: 0.3s;
+
+            text-decoration: none;
+
+            display: block;
+        }
+
+
+        .blood-summary-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow:
+                    0 13px 28px
+                    rgba(0, 0, 0, 0.25);
+        }
+
+
+        .blood-summary-icon {
+            font-size: 32px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .blood-summary-card h3 {
+            color: #8b0000;
+
+            font-size: 24px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .blood-summary-number {
+            color: #b71c1c;
+
+            font-size: 32px;
+
+            font-weight: bold;
+        }
+
+
+        .blood-summary-label {
+            color: #777;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+
+        /* ================= QUICK ACTIONS ================= */
+
+        .quick-section {
+            margin-bottom: 35px;
+        }
+
+
+        .quick-heading {
+            text-align: center;
+
+            color: white;
+
+            font-size: 30px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .quick-grid {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .quick-card {
+            display: block;
+
+            background: white;
+
+            color: #333;
+
+            text-decoration: none;
+
+            border-radius: 17px;
+
+            padding: 25px 15px;
+
+            text-align: center;
+
+            box-shadow:
+                    0 8px 22px
+                    rgba(0, 0, 0, 0.18);
+
+            transition: 0.3s;
+        }
+
+
+        .quick-card:hover {
+            transform: translateY(-6px);
+
+            box-shadow:
+                    0 14px 30px
+                    rgba(0, 0, 0, 0.25);
+        }
+
+
+        .quick-icon {
+            font-size: 38px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .quick-card h3 {
+            color: #8b0000;
+
+            margin-bottom: 8px;
+
+            font-size: 18px;
+        }
+
+
+        .quick-card p {
+            color: #777;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+
+            color: #ffecec;
+
+            padding: 20px;
+
+            margin-top: 10px;
+
+            border-top:
+                    1px solid
+                    rgba(255,255,255,0.20);
+
+            font-size: 14px;
+        }
+
+
+        /* ================= TABLET ================= */
+
+        @media (max-width: 900px) {
+
+            nav {
+                flex-direction: column;
+
+                gap: 15px;
+
+                padding: 15px 25px;
+            }
+
+
+            .summary-grid {
+                grid-template-columns:
+                        repeat(2, 1fr);
+            }
+
+
+            .stock-grid {
+                grid-template-columns:
+                        repeat(2, 1fr);
+            }
+
+
+            .blood-summary-grid {
+                grid-template-columns:
+                        repeat(2, 1fr);
+            }
+
+
+            .quick-grid {
+                grid-template-columns:
+                        repeat(2, 1fr);
+            }
+
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            .main {
+                padding: 30px 12px;
+            }
+
+
+            .dashboard-header h1 {
+                font-size: 30px;
+            }
+
+
+            .dashboard-icon {
+                font-size: 50px;
+            }
+
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .stock-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .blood-summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .nav-links {
+                gap: 10px;
+            }
+
+
+            nav a {
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav>
+
+    <div class="logo">
+
+        🩸 <span>Blood Bank</span>
+
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="/">
+            🏠 Home
+        </a>
+
+        <a href="/dashboard">
+            📊 Dashboard
+        </a>
+
+        <a href="/donor">
+            🩸 Donor
+        </a>
+
+        <a href="/find-blood">
+            🔎 Find Blood
+        </a>
+
+        <a href="/donors">
+            👥 All Donors
+        </a>
+
+        <a href="/blood-stock">
+            📦 Blood Stock
+        </a>
+
+
+        <span
+                class="welcome-user"
+                th:if="${userName != null}">
+
+            👤
+            <span th:text="${userName}">
+                User
+            </span>
+
+        </span>
+
+
+        <a
+                href="/logout"
+                class="logout-btn">
+
+            🚪 Logout
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+
+    <!-- ================= HEADER ================= -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-icon">
+            📊
+        </div>
+
+        <h1>
+            Blood Bank Dashboard
+        </h1>
+
+        <p>
+            Monitor donors and blood stock from one place
+        </p>
+
+
+        <div class="role-badge">
+
+            👤 Role:
+
+            <span th:text="${role}">
+                USER
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div class="summary-grid">
+
+
+        <!-- Total Donors -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                👥
+            </div>
+
+            <h3>
+                Total Donors
+            </h3>
+
+            <div
+                    class="summary-number"
+                    th:text="${totalDonors}">
+
+                0
+
+            </div>
+
+            <div class="summary-label">
+                Registered Donors
+            </div>
+
+        </div>
+
+
+        <!-- Total Blood Units -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                🩸
+            </div>
+
+            <h3>
+                Total Blood Units
+            </h3>
+
+            <div
+                    class="summary-number"
+                    th:text="${totalBloodUnits}">
+
+                0
+
+            </div>
+
+            <div class="summary-label">
+                Available Units
+            </div>
+
+        </div>
+
+
+        <!-- Blood Groups -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                🧪
+            </div>
+
+            <h3>
+                Blood Groups
+            </h3>
+
+            <div
+                    class="summary-number"
+                    th:text="${bloodGroupCount}">
+
+                0
+
+            </div>
+
+            <div class="summary-label">
+                Groups in Stock
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= BLOOD STOCK ================= -->
+
+    <section class="stock-section">
+
+        <div class="stock-heading">
+
+            <h2>
+                🩸 Current Blood Stock
+            </h2>
+
+            <p>
+                Blood units currently stored in the blood bank
+            </p>
+
+        </div>
+
+
+        <div class="stock-grid">
+
+
+            <!-- Stock Cards -->
+
+            <div
+                    class="stock-card"
+                    th:each="stock : ${bloodStocks}">
+
+                <div class="stock-icon">
+                    🩸
+                </div>
+
+                <h3
+                        th:text="${stock.bloodGroup}">
+
+                    O+
+
+                </h3>
+
+                <p>
+                    Available Units
+                </p>
+
+                <div
+                        class="stock-number"
+                        th:text="${stock.quantity}">
+
+                    0
+
+                </div>
+
+                <div class="stock-unit">
+                    Units
+                </div>
+
+            </div>
+
+
+            <!-- No Stock -->
+
+            <div
+                    class="no-stock"
+                    th:if="${#lists.isEmpty(bloodStocks)}">
+
+                <div class="no-stock-icon">
+                    📦
+                </div>
+
+                <h3>
+                    No Blood Stock Available
+                </h3>
+
+                <p>
+                    Add blood stock to see the available units here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= BLOOD GROUP SUMMARY ================= -->
+
+    <section class="blood-summary-section">
+
+        <div class="blood-summary-heading">
+
+            <h2>
+                🩸 Blood Group Summary
+            </h2>
+
+            <p>
+                Number of registered donors by blood group
+            </p>
+
+        </div>
+
+
+        <div class="blood-summary-grid">
+
+
+            <!-- Blood Group Cards -->
+
+            <div
+                    class="blood-summary-card"
+                    th:each="entry : ${bloodGroupSummary}">
+
+                <div class="blood-summary-icon">
+                    🩸
+                </div>
+
+                <h3
+                        th:text="${entry.key}">
+
+                    A+
+
+                </h3>
+
+                <div
+                        class="blood-summary-number"
+                        th:text="${entry.value}">
+
+                    0
+
+                </div>
+
+                <div class="blood-summary-label">
+
+                    Registered Donors
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= QUICK ACTIONS ================= -->
+
+    <section class="quick-section">
+
+        <h2 class="quick-heading">
+            Quick Actions
+        </h2>
+
+
+        <div class="quick-grid">
+
+
+            <!-- Add Donor -->
+
+            <a
+                    href="/donor"
+                    class="quick-card">
+
+                <div class="quick-icon">
+                    🩸
+                </div>
+
+                <h3>
+                    Add Donor
+                </h3>
+
+                <p>
+                    Register a new blood donor.
+                </p>
+
+            </a>
+
+
+            <!-- Find Blood -->
+
+            <a
+                    href="/find-blood"
+                    class="quick-card">
+
+                <div class="quick-icon">
+                    🔎
+                </div>
+
+                <h3>
+                    Find Blood
+                </h3>
+
+                <p>
+                    Search blood groups and donors.
+                </p>
+
+            </a>
+
+
+            <!-- All Donors -->
+
+            <a
+                    href="/donors"
+                    class="quick-card">
+
+                <div class="quick-icon">
+                    👥
+                </div>
+
+                <h3>
+                    All Donors
+                </h3>
+
+                <p>
+                    View all registered donors.
+                </p>
+
+            </a>
+
+
+            <!-- Blood Stock -->
+
+            <a
+                    href="/blood-stock"
+                    class="quick-card">
+
+                <div class="quick-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Blood Stock
+                </h3>
+
+                <p>
+                    Add, edit and delete blood stock.
+                </p>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        🩸 Blood Bank Management System
+
+        <br>
+
+        Donate Blood • Save Lives • Help Others ❤️
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>
