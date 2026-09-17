@@ -43,7 +43,7 @@ public class LoginController {
             session.setAttribute("userName", "Admin");
             session.setAttribute("role", "ADMIN");
 
-            return "redirect:/dashboard";
+            return "redirect:/";
         }
 
         // ================= REGISTERED USER LOGIN =================
@@ -57,7 +57,7 @@ public class LoginController {
             session.setAttribute("userName", user.getName());
             session.setAttribute("role", "USER");
 
-            return "redirect:/dashboard";
+            return "redirect:/";
         }
 
         // ================= WRONG LOGIN =================
